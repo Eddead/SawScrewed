@@ -1,0 +1,17 @@
+# --- Base packages ---
+opencv-python           # cv2
+ultralytics             # YOLO wrapper
+labelImg                # For manual annotation
+pyyaml                  # Used for .yaml configs
+
+# --- Torch (CPU or GPU) ---
+# IMPORTANT:
+# Install only ONE of the torch lines below depending on your system!
+
+# For CPU-only systems:
+# torch==2.1.0+cpu - Use pip from PyTorch site or build wheels manually
+# pip install torch==2.1.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+# For GPU (CUDA 11.8) systems:
+# torch==2.6.0+cu118
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
