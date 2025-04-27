@@ -1,8 +1,9 @@
 # --- Base packages ---
 opencv-python           # cv2
 ultralytics             # YOLO wrapper
-labelImg                # For manual annotation
+label-studio            # For manual annotation
 pyyaml                  # Used for .yaml configs
+streamlit
 
 # --- Torch (CPU or GPU) ---
 # IMPORTANT:

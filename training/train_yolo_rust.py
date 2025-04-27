@@ -8,7 +8,7 @@ def main():
         data='data.yaml',
         epochs=100,
         imgsz=960,
-        batch=16,
+        batch=8,
         name='screw_rust_detection',
         augment=True,
         device='cuda:0',  # or 'cpu' if you want
