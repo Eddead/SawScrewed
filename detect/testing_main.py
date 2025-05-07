@@ -2,7 +2,8 @@ import streamlit as st
 import cv2
 import os
 import numpy as np
-from detect_image import image_detection
+import tempfile
+from detect_image import image_detection, resize_and_pads
 from cam_detection import list_available_cameras
 from ultralytics import YOLO
 
@@ -72,9 +73,18 @@ if mode == "Image":
         image = cv2.imread(image_path)
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+        roi_used_image = resize_and_pad(image_rgb)
+
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        temp_path = temp_file.name  # Path to the temp file
+        temp_file.close()  # Close file handle
+
+        # Save roi selected image to temp path
+        cv2.imwrite(temp_path, roi_used_image)
+
         # Ask ROI only when a new file is uploaded
         if "last_uploaded" not in st.session_state or uploaded_file.name != st.session_state.last_uploaded:
-            roi = cv2.selectROI("Select ROI", image_rgb)
+            roi = cv2.selectROI("Select ROI", roi_used_image)
             cv2.destroyAllWindows()
 
             if roi == (0, 0, 0, 0):
@@ -85,7 +95,7 @@ if mode == "Image":
             st.session_state.last_uploaded = uploaded_file.name
         
         x, y, w, h = st.session_state.roi
-        cropped = image_rgb[y:y+h, x:x+w]
+        cropped = roi_used_image[y:y+h, x:x+w]
 
         brightness = st.slider('✨ Brightness', -100, 100, 0)
         zoom_percent = st.slider('🔍 Zoom %', 10, 300, 100)
@@ -110,7 +120,7 @@ if mode == "Image":
         final_img[y_offset:y_offset+cropped_h, x_offset:x_offset+cropped_w] = cropped_img
 
         detected_img, total, normal, rust, chipped, bent = image_detection(
-            model, image_path, brightness, zoom_percent, x, y, w, h
+            model, temp_path, brightness, zoom_percent, x, y, w, h
         )
 
         col1, col2 = st.columns(2)

@@ -21,6 +21,27 @@ def iou(box1, box2):
 
     return inter_area / union_area if union_area != 0 else 0
 
+def resize_and_pad(image, target_size=(1024, 1024), pad_color=255):
+    original_h, original_w = image.shape[:2]
+    target_w, target_h = target_size
+
+    # Compute scale and new size
+    scale = min(target_w / original_w, target_h / original_h)
+    new_w, new_h = int(original_w * scale), int(original_h * scale)
+
+    # Resize image
+    resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
+
+    # Create padded image
+    result = np.ones((target_h, target_w, 3), dtype=np.uint8) * pad_color
+
+    # Center the resized image
+    top = (target_h - new_h) // 2
+    left = (target_w - new_w) // 2
+    result[top:top+new_h, left:left+new_w] = resized
+
+    return result
+
 # --- Merge boxes by taking min/max of coordinates ---
 def merge_boxes(group):
     x1_list = [box[0] for _, box in group]
