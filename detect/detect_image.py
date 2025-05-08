@@ -113,20 +113,53 @@ def image_detection(model_path, image_path, brightness, zoom_percent, ROI_x, ROI
         cls = int(cls)
         label = model.names.get(cls, "Unknown")
         raw_boxes.append((label, [x1, y1, x2, y2]))
+    
+    filtered_boxes = []
+    for i, (label_i, box_i) in enumerate(raw_boxes):
+        x1_i, y1_i, x2_i, y2_i = box_i
+        area_i = (x2_i - x1_i) * (y2_i - y1_i)
+        eliminate = False
+
+        for j, (label_j, box_j) in enumerate(raw_boxes):
+            if i == j:
+                continue
+
+            x1_j, y1_j, x2_j, y2_j = box_j
+            area_j = (x2_j - x1_j) * (y2_j - y1_j)
+
+            # Identify the smaller box
+            if area_i >= area_j:
+                continue  # Only eliminate smaller boxes
+
+            # Calculate intersection area
+            xi1 = max(x1_i, x1_j)
+            yi1 = max(y1_i, y1_j)
+            xi2 = min(x2_i, x2_j)
+            yi2 = min(y2_i, y2_j)
+
+            inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
+
+            # Eliminate if intersection is more than 65% of the small box (box_i)
+            if inter_area / area_i > 0.65:
+                eliminate = True
+                break
+
+        if not eliminate:
+            filtered_boxes.append((label_i, box_i))
 
     # Group overlapping boxes
     groups = []
     used = set()
 
-    for i, (label1, box1) in enumerate(raw_boxes):
+    for i, (label1, box1) in enumerate(filtered_boxes):
         if i in used:
             continue
         group = [(label1, box1)]
         used.add(i)
-        for j in range(i + 1, len(raw_boxes)):
+        for j in range(i + 1, len(filtered_boxes)):
             if j in used:
                 continue
-            label2, box2 = raw_boxes[j]
+            label2, box2 = filtered_boxes[j]
             if iou(box1, box2) >= 0.6:
                 group.append((label2, box2))
                 used.add(j)
@@ -164,13 +197,15 @@ def image_detection(model_path, image_path, brightness, zoom_percent, ROI_x, ROI
         merged_box = merge_boxes(group)
         x1, y1, x2, y2 = map(int, merged_box)
         combined_label = ", ".join(sorted(labels))
-        screw_label = f"Screw #{idx}: {combined_label}"
 
         # Draw rectangle and label
-        cv2.rectangle(labeled_image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-        cv2.putText(labeled_image, screw_label, (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
-
-        print(screw_label)
+        if combined_label=="normal":
+            cv2.rectangle(labeled_image, (x1, y1), (x2, y2), (126, 247, 26 ), 2)
+            cv2.putText(labeled_image, combined_label, (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,0,255), 2)
+        else:
+            cv2.rectangle(labeled_image, (x1, y1), (x2, y2), (242, 57, 39), 2)
+            cv2.putText(labeled_image, combined_label, (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (242, 57, 39), 2)
 
     return labeled_image, summary["total_screws"], summary["normal"], summary["rust"], summary["chipped"], summary["bent"]
