@@ -39,8 +39,10 @@ def resize_and_pad(image, target_size=(1024, 1024), pad_color=255):
     top = (target_h - new_h) // 2
     left = (target_w - new_w) // 2
     result[top:top+new_h, left:left+new_w] = resized
+    
+    result_rgb = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
 
-    return result
+    return result_rgb
 
 # --- Merge boxes by taking min/max of coordinates ---
 def merge_boxes(group):
