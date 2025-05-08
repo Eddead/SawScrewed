@@ -297,13 +297,13 @@ elif mode == "Video":
 
                     # Draw rectangle and label
                     if combined_label=="normal":
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (126, 247, 26 ), 2)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (26, 247, 126 ), 2)
                         cv2.putText(frame, combined_label, (x1, y1 - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,0,0), 2)
                     else:
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (242, 57, 39), 2)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (39, 57, 242), 2)
                         cv2.putText(frame, combined_label, (x1, y1 - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (242, 57, 39), 2)
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (39, 57, 242), 2)
 
                 summaryText = f"Total: {summary["total_screws"]}  Normal: {summary["normal"]}  Rust: {summary["rust"]}  Bent: {summary["bent"]}  Chipped: {summary["chipped"]}"
                 cv2.putText(frame, summaryText, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
@@ -453,13 +453,13 @@ elif mode == "Live":
                         x1, y1, x2, y2 = map(int, merge_boxes(group))
                         label_text = ", ".join(sorted(labels))
                         if label_text=="normal":
-                            cv2.rectangle(frame, (x1, y1), (x2, y2), (126, 247, 26 ), 2)
+                            cv2.rectangle(frame, (x1, y1), (x2, y2), (26, 247, 126 ), 2)
                             cv2.putText(frame, label_text, (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,0,0), 2)
                         else:
-                            cv2.rectangle(frame, (x1, y1), (x2, y2), (242, 57, 39), 2)
+                            cv2.rectangle(frame, (x1, y1), (x2, y2), (39, 57, 242), 2)
                             cv2.putText(frame, label_text, (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (242, 57, 39), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (39, 57, 242), 2)
 
                     # Show summary on top
                     summary_text = f"Total: {summary['total_screws']}  Normal: {summary['normal']}  Rust: {summary['rust']}  Bent: {summary['bent']}  Chipped: {summary['chipped']}"
