@@ -3,7 +3,7 @@ import cv2
 import os
 import numpy as np
 import tempfile
-from detect_image import image_detection, resize_and_pads
+from detect_image import image_detection, resize_and_pad
 from cam_detection import list_available_cameras
 from ultralytics import YOLO
 
@@ -118,6 +118,7 @@ if mode == "Image":
         y_offset = (ch - cropped_h) // 2
         x_offset = (cw - cropped_w) // 2
         final_img[y_offset:y_offset+cropped_h, x_offset:x_offset+cropped_w] = cropped_img
+        final_img=cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB)
 
         detected_img, total, normal, rust, chipped, bent = image_detection(
             model, temp_path, brightness, zoom_percent, x, y, w, h
@@ -130,6 +131,7 @@ if mode == "Image":
             st.image(detected_img, caption="✅ Detected Screws")
 
         if st.button("💾 Save Detection"):
+            detected_img=cv2.cvtColor(detected_img, cv2.COLOR_BGR2RGB)
             cv2.imwrite("saved_detection.png", detected_img)
             st.success("Image saved as `saved_detection.png`!")
 
