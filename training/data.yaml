@@ -1,5 +1,6 @@
-train: /images
-val: /images
+train: /images/train
+val: /images/val
 
-nc: 2
-names: ['normal', 'rust']
+nc: 4
+names: ['normal', 'rust','chipped', 'bent']
+weights: [0.5, 0.7, 4.0, 0.9]
