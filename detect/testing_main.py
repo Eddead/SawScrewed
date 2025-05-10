@@ -120,9 +120,7 @@ if mode == "Image":
         final_img[y_offset:y_offset+cropped_h, x_offset:x_offset+cropped_w] = cropped_img
         final_img=cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB)
 
-        detected_img, total, normal, rust, chipped, bent = image_detection(
-            model, temp_path, brightness, zoom_percent, x, y, w, h
-        )
+        detected_img= image_detection(model, temp_path, brightness, zoom_percent, x, y, w, h)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -135,12 +133,6 @@ if mode == "Image":
             cv2.imwrite("saved_detection.png", detected_img)
             st.success("Image saved as `saved_detection.png`!")
 
-        st.markdown("### 📊 Detection Summary")
-        st.markdown(f"- **Total Screws**: {total}")
-        st.markdown(f"- 🟢 Normal: {normal}")
-        st.markdown(f"- 🟠 Rust: {rust}")
-        st.markdown(f"- 🔵 Bent: {bent}")
-        st.markdown(f"- 🟣 Chipped: {chipped}")
 
 # ========== VIDEO MODE ==========
 elif mode == "Video":
@@ -236,7 +228,7 @@ elif mode == "Video":
                         inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
 
                         # Eliminate if intersection is more than 65% of the small box (box_i)
-                        if inter_area / area_i > 0.65:
+                        if inter_area / area_i > 0.65 and label_i==label_j:
                             eliminate = True
                             break
 
@@ -432,7 +424,7 @@ elif mode == "Live":
                             if j in used:
                                 continue
                             label2, box2 = filtered_boxes[j]
-                            if iou(box1, box2) >= 0.6:
+                            if iou(box1, box2) >= 0.6 and label_i==label_j:
                                 group.append((label2, box2))
                                 used.add(j)
                         groups.append(group)
