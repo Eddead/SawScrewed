@@ -140,7 +140,7 @@ def image_detection(model_path, image_path, brightness, zoom_percent, ROI_x, ROI
             inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
 
             # Eliminate if intersection is more than 65% of the small box (box_i)
-            if inter_area / area_i > 0.65:
+            if inter_area / area_i > 0.65 and label_i==label_j:
                 eliminate = True
                 break
 
@@ -207,5 +207,9 @@ def image_detection(model_path, image_path, brightness, zoom_percent, ROI_x, ROI
             cv2.rectangle(labeled_image, (x1, y1), (x2, y2), (242, 57, 39), 2)
             cv2.putText(labeled_image, combined_label, (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (242, 57, 39), 2)
+        
+    # Show summary on top
+    summary_text = f"Total: {summary['total_screws']}  Normal: {summary['normal']}  Rust: {summary['rust']}  Bent: {summary['bent']}  Chipped: {summary['chipped']}"
+    cv2.putText(labeled_image, summary_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
-    return labeled_image, summary["total_screws"], summary["normal"], summary["rust"], summary["chipped"], summary["bent"]
+    return labeled_image
