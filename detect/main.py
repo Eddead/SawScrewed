@@ -8,7 +8,7 @@ from cam_detection import list_available_cameras
 from ultralytics import YOLO
 
 st.set_page_config(layout="wide")
-st.title("🔩 Screw Detection App")
+st.title("🔩 Screw Counting App")
 
 FIXED_SIZE = (500, 500)
 
